@@ -1,0 +1,174 @@
+[2025-08-17T08:29:38.296Z] Erreur createDossier | Error: PrismaClientValidationError: 
+Invalid `prisma.dossier.create()` invocation:
+
+{
+  data: {
+    titre: "Consultation Cardiologie",
+    contenu: "Patient présente une tachycardie légère...",
+    patientId: "cmee1wuda0000mt6sb42ted6z",
+    medecinId: undefined,
++   patient: {
++     create: UtilisateurCreateWithoutDossiersInput | UtilisateurUncheckedCreateWithoutDossiersInput,
++     connectOrCreate: UtilisateurCreateOrConnectWithoutDossiersInput,
++     connect: UtilisateurWhereUniqueInput
++   }
+  }
+}
+
+Argument `patient` is missing.
+[2025-08-17T08:32:09.215Z] Erreur createDossier | Error: PrismaClientValidationError: 
+Invalid `prisma.dossier.create()` invocation:
+
+{
+  data: {
+    titre: "Consultation Cardiologie",
+    contenu: "Patient présente une tachycardie légère...",
+    patientId: "cmee1wuda0000mt6sb42ted6z",
+    medecinId: undefined,
++   patient: {
++     create: UtilisateurCreateWithoutDossiersInput | UtilisateurUncheckedCreateWithoutDossiersInput,
++     connectOrCreate: UtilisateurCreateOrConnectWithoutDossiersInput,
++     connect: UtilisateurWhereUniqueInput
++   }
+  }
+}
+
+Argument `patient` is missing.
+[2025-08-17T09:09:55.801Z] Erreur createDossier | Error: PrismaClientValidationError: 
+Invalid `prisma.dossier.create()` invocation:
+
+{
+  data: {
+    titre: "Consultation Cardiologie",
+    contenu: "Patient présente une tachycardie légère...",
+    numeroDossier: "DOS-01",
+    ~~~~~~~~~~~~~
+    patient: {
+      connect: {
+        id: "cmee1wuda0000mt6sb42ted6z"
+      }
+    },
+    medecin: {
+      connect: {
+        id: "cmefc5x3m0000mt8rpt52mixu"
+      }
+    },
+?   id?: String,
+?   dateCreation?: DateTime,
+?   dateMiseAJour?: DateTime,
+?   historique?: HistoriqueAccesCreateNestedManyWithoutDossierInput
+  }
+}
+
+Unknown argument `numeroDossier`. Available options are marked with ?.
+[2025-08-17T09:16:03.614Z] Erreur createDossier | Error: PrismaClientValidationError: 
+Invalid `prisma.dossier.create()` invocation:
+
+{
+  data: {
+    titre: "Consultation Cardiologie",
+    contenu: "Patient présente une tachycardie légère...",
+    numeroDossier: "DOS-01",
+    ~~~~~~~~~~~~~
+    patient: {
+      connect: {
+        id: "cmee1wuda0000mt6sb42ted6z"
+      }
+    },
+    medecin: {
+      connect: {
+        id: "cmefc5x3m0000mt8rpt52mixu"
+      }
+    },
+?   id?: String,
+?   dateCreation?: DateTime,
+?   dateMiseAJour?: DateTime,
+?   historique?: HistoriqueAccesCreateNestedManyWithoutDossierInput
+  }
+}
+
+Unknown argument `numeroDossier`. Available options are marked with ?.
+[2025-08-17T09:26:49.183Z] Erreur createDossier | Error: PrismaClientValidationError: 
+Invalid `prisma.dossier.create()` invocation:
+
+{
+  data: {
+    titre: "Consultation Cardiologie",
+    contenu: "Patient présente une tachycardie légère...",
+    numeroDossier: "DOS-01",
+    ~~~~~~~~~~~~~
+    patient: {
+      connect: {
+        id: "cmee1wuda0000mt6sb42ted6z"
+      }
+    },
+    medecin: {
+      connect: {
+        id: "cmefc5x3m0000mt8rpt52mixu"
+      }
+    },
+?   id?: String,
+?   dateCreation?: DateTime,
+?   dateMiseAJour?: DateTime,
+?   historique?: HistoriqueAccesCreateNestedManyWithoutDossierInput
+  }
+}
+
+Unknown argument `numeroDossier`. Available options are marked with ?.
+[2025-08-18T14:38:08.902Z] Erreur createDossier | Error: ReferenceError: nomPatient is not defined
+[2025-08-18T14:40:37.072Z] Erreur createDossier | Error: ReferenceError: nomPatient is not defined
+[2025-08-18T14:41:49.291Z] Erreur createDossier | Error: ReferenceError: nomPatient is not defined
+[2025-08-19T00:56:01.193Z] Erreur getPatientDossiers | Error: TypeError: Cannot destructure property 'nomPatient' of 'req.body' as it is undefined.
+[2025-08-19T12:04:00.134Z] Erreur demanderAcces | Error: PrismaClientValidationError: 
+Invalid `prisma.utilisateur.findUnique()` invocation:
+
+{
+  where: {
+    codePatient: undefined,
+?   id?: String,
+?   email?: String,
+?   numeroLicence?: String,
+?   AND?: UtilisateurWhereInput | UtilisateurWhereInput[],
+?   OR?: UtilisateurWhereInput[],
+?   NOT?: UtilisateurWhereInput | UtilisateurWhereInput[],
+?   motDePasse?: StringFilter | String,
+?   nom?: StringFilter | String,
+?   prenom?: StringFilter | String,
+?   telephone?: StringNullableFilter | String | Null,
+?   dateNaissance?: DateTimeNullableFilter | DateTime | Null,
+?   role?: EnumRoleFilter | Role,
+?   verifie?: BoolFilter | Boolean,
+?   actif?: BoolFilter | Boolean,
+?   specialite?: StringNullableFilter | String | Null,
+?   hopital?: StringNullableFilter | String | Null,
+?   createdAt?: DateTimeFilter | DateTime,
+?   updatedAt?: DateTimeFilter | DateTime,
+?   dossiers?: DossierListRelationFilter,
+?   medecinDossiers?: DossierListRelationFilter,
+?   adminDossiers?: DossierListRelationFilter,
+?   demandesAcces?: DemandeAccesListRelationFilter,
+?   demandesEnvoyees?: DemandeAccesListRelationFilter,
+?   historiquesAcces?: HistoriqueAccesListRelationFilter,
+?   resetTokens?: ResetTokenListRelationFilter,
+?   verificationTokens?: VerificationTokenListRelationFilter,
+?   autorisationsDonnees?: DossierAutorisationListRelationFilter,
+?   autorisationsRecues?: DossierAutorisationListRelationFilter,
+?   suppressions?: SuppressionLogListRelationFilter,
+?   consultationsAdministrees?: ConsultationListRelationFilter,
+?   auditLogs?: AuditLogListRelationFilter
+  }
+}
+
+Argument `where` of type UtilisateurWhereUniqueInput needs at least one of `id`, `email`, `codePatient` or `numeroLicence` arguments. Available options are marked with ?.
+[2025-08-19T12:38:31.364Z] Erreur revoquerAcces | Error: PrismaClientValidationError: 
+Invalid `prisma.dossierAutorisation.deleteMany()` invocation:
+
+{
+  where: {
+    donneurAcces: "cmehrieb20000mt6nm5v2uii1",
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    medecinId: "cmeihsb5l0000mtb5m0meonyw"
+  }
+}
+
+Argument `donneurAcces`: Invalid value provided. Expected UtilisateurScalarRelationFilter or UtilisateurWhereInput, provided String.

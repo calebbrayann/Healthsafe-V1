@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  PATIENT
+  MEDECIN
+  ADMIN_HOPITAL
+  SUPER_ADMIN
+  REVOQUE
+}
+
+enum StatutDemande {
+  EN_ATTENTE
+  ACCEPTEE
+  REFUSEE
+}
+
+model Utilisateur {
+  id                   String               @id @default(cuid())
+  email                String               @unique
+  motDePasse           String
+  nom                  String
+  prenom               String
+  telephone            String?
+  dateNaissance        DateTime?
+  role                 Role                 @default(PATIENT)
+  codePatient          String?              @unique
+  verifie              Boolean              @default(false)
+  actif                Boolean              @default(true)
+
+  // Champs spécifiques médecin
+  specialite           String?
+  numeroLicence        String?              @unique
+  hopital              String?
+
+  // Relations
+  dossiers             Dossier[]            @relation("DossiersDuPatient")
+  medecinDossiers      Dossier[]            @relation("DossiersDuMedecin")
+  adminDossiers        Dossier[]            @relation("DossiersParAdmin")
+  demandesAcces        DemandeAcces[]       @relation("DemandesPourCePatient")
+  demandesEnvoyees     DemandeAcces[]       @relation("DemandesParLeMedecin")
+  historiquesAcces     HistoriqueAcces[]    @relation("HistoriqueParUtilisateur")
+  resetTokens          ResetToken[]
+  verificationTokens   VerificationToken[]
+  autorisationsDonnees DossierAutorisation[] @relation("AutorisationsDonnees")
+  autorisationsRecues  DossierAutorisation[] @relation("AutorisationsRecues")
+  suppressions         SuppressionLog[]
+  consultationsAdministrees Consultation[]   @relation("ConsultationsParAdmin")
+  auditLogs            AuditLog[]           @relation("LogsParUtilisateur")
+
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+}
+
+model Dossier {
+  id             String   @id @default(cuid())
+  titre          String
+  contenu        String
+  numeroDossier  String   @unique
+  patientId      String
+  medecinId      String?  
+  dateCreation   DateTime @default(now())
+  dateMiseAJour  DateTime @updatedAt
+
+  patient        Utilisateur @relation("DossiersDuPatient", fields: [patientId], references: [id])
+  medecin        Utilisateur? @relation("DossiersDuMedecin", fields: [medecinId], references: [id])
+  adminId        String?
+  admin          Utilisateur? @relation("DossiersParAdmin", fields: [adminId], references: [id])
+  historique     HistoriqueAcces[]
+  autorisations  DossierAutorisation[]
+}
+
+model DossierAutorisation {
+  id            String      @id @default(cuid())
+  dossierId     String
+  medecinId     String
+  autorisePar   String
+  dateAcces     DateTime    @default(now())
+
+  dossier       Dossier     @relation(fields: [dossierId], references: [id])
+  medecin       Utilisateur @relation("AutorisationsRecues", fields: [medecinId], references: [id])
+  donneurAcces  Utilisateur @relation("AutorisationsDonnees", fields: [autorisePar], references: [id])
+
+  @@unique([dossierId, medecinId])
+}
+
+model DemandeAcces {
+  id             String             @id @default(cuid())
+  medecinId      String
+  patientId      String
+  statut         StatutDemande      @default(EN_ATTENTE)
+  dateDemande    DateTime           @default(now())
+
+  medecin        Utilisateur        @relation("DemandesParLeMedecin", fields: [medecinId], references: [id])
+  patient        Utilisateur        @relation("DemandesPourCePatient", fields: [patientId], references: [id])
+}
+
+model HistoriqueAcces {
+  id             String             @id @default(cuid())
+  dossierId      String
+  utilisateurId  String
+  dateAcces      DateTime           @default(now())
+
+  dossier        Dossier            @relation(fields: [dossierId], references: [id])
+  utilisateur    Utilisateur        @relation("HistoriqueParUtilisateur", fields: [utilisateurId], references: [id])
+}
+
+model ResetToken {
+  id             String    @id @default(cuid())
+  utilisateurId  String
+  token          String    @unique
+  expiration     DateTime
+  createdAt      DateTime  @default(now())
+
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id             String    @id @default(cuid())
+  utilisateurId  String
+  token          String    @unique
+  expiration     DateTime
+  createdAt      DateTime  @default(now())
+
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
+
+model Consultation {
+  id        String   @id @default(cuid())
+  adminId   String?
+  medecinId String?
+  sujet     String
+  contenu   String
+  date      DateTime @default(now())
+
+  admin     Utilisateur? @relation("ConsultationsParAdmin", fields: [adminId], references: [id])
+}
+
+model SuppressionLog {
+  id             String   @id @default(cuid())
+  utilisateurId  String
+  suppriméPar    String
+  raison         String
+  date           DateTime @default(now())
+
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id])
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  action         String
+  utilisateurId  String
+  cibleId        String?
+  meta           Json?
+  timestamp      DateTime @default(now())
+
+  utilisateur    Utilisateur @relation("LogsParUtilisateur", fields: [utilisateurId], references: [id])
+}
