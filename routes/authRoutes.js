@@ -1,3 +1,5 @@
+// routes/authRoutes.js
+
 import express from 'express';
 import {
   registerPatient,
@@ -16,13 +18,8 @@ import { validateLogin } from '../middlewares/validateLogin.js';
 
 const router = express.Router();
 
-// Patients
-
-// Inscription
-router.post('/register-patient', validateAndSanitize, registerPatient);
-
-// Médecins
-router.post('/register-medecin', registerMedecin);
+// Test de chargement du routeur
+console.log('authRoutes chargé');
 
 // Connexion
 router.post('/login', validateLogin, login);
@@ -30,7 +27,13 @@ router.post('/login', validateLogin, login);
 // Déconnexion
 router.post('/logout', authMiddleware, logout);
 
-// Vérification d'email
+// Inscription patient
+router.post('/register-patient', validateAndSanitize, registerPatient);
+
+// Inscription médecin
+router.post('/register-medecin', registerMedecin);
+
+// Vérification d’email
 router.get('/verify/:token', verifyEmail);
 
 // Demande de réinitialisation de mot de passe
@@ -41,5 +44,10 @@ router.post('/reset-password/:token', resetPassword);
 
 // Réinitialisation du code patient
 router.post('/reset-code-patient', authMiddleware, resetCodePatient);
+
+// Route de test interne (à supprimer en prod)
+router.post('/ping', (req, res) => {
+  res.json({ message: 'authRoutes fonctionne' });
+});
 
 export default router;
