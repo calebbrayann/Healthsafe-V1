@@ -41,3 +41,27 @@ EMAIL_PASS=...
 
 pnpm start
 
+
+5. Documentation Swagger
+
+La documentation complète de l’API est disponible dans docs/swagger.json.
+Pour visualiser Swagger UI :
+
+Installer Swagger UI Express (si nécessaire) :
+
+pnpm add swagger-ui-express
+
+
+Modifier index.js :
+
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json' assert { type: 'json' };
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+Accéder à la documentation :
+
+http://localhost:3000/api-docs 
+
+healthsafe-v1-production.up.railway.app/api-docs
