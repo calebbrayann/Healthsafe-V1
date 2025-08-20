@@ -65,3 +65,28 @@ Accéder à la documentation :
 http://localhost:3000/api-docs 
 
 healthsafe-v1-production.up.railway.app/api-docs
+
+
+6. Sécurité
+
+JWT pour l’authentification
+
+Rate limiting pour limiter les tentatives de connexion
+
+Helmet et HPP pour protéger les headers et les requêtes
+
+CORS configuré selon FRONTEND_URL
+
+ 7. Structure du projet
+   HealthSafe/
+
+ controllers/      # Logique des routes
+ middlewares/      # Middleware auth et sécurité
+ routes/           # Définition des routes
+ docs/             # Documentation Swagger
+ config/           # Prisma, nodemailer, etc.
+ index.js          # Point d’entrée de l’API
+
+ 8.Contact
+
+Pour toute question : healthsafes107@gmail.com
