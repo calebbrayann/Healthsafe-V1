@@ -40,6 +40,14 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/dossiers', dossierRoutes);
 app.use('/api/acces', accesRoutes);
 
+// Charger le fichier swagger.json
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.join('./docs/swagger.json'), 'utf-8')
+);
+
+// Route pour Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Health check
 app.get('/', (req, res) => res.send('API HealthSafe welcome OK'));
 
