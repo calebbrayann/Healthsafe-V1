@@ -62,9 +62,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 Accéder à la documentation :
 
-http://localhost:3000/api-docs 
-
-healthsafe-v1-production.up.railway.app/api-docs
+https://healthsafe-v1-production.up.railway.app/api-docs
 
 
 6. Sécurité
