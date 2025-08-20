@@ -29,7 +29,7 @@
     { "name": "Admin", "description": "Fonctions administratives et gestion utilisateurs" }
   ], 
   "paths": {
-    "/auth/register-patient": {
+    "api/auth/register-patient": {
       "post": {
         "tags": ["Auth"],
         "summary": "Inscription d’un patient",
@@ -59,7 +59,7 @@
         }
       }
     },
-    "/auth/register-medecin": {
+    "api/auth/register-medecin": {
       "post": {
         "tags": ["Auth"],
         "summary": "Inscription d’un médecin",
@@ -90,7 +90,7 @@
         }
       }
     },
-    "/auth/login": {
+    "api/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Connexion",
@@ -117,7 +117,7 @@
         }
       }
     },
-    "/auth/logout": {
+    "api/auth/logout": {
       "post": {
         "tags": ["Auth"],
         "summary": "Déconnexion",
@@ -129,7 +129,7 @@
         }
       }
     },
-    "/auth/verify/{token}": {
+    "api/auth/verify/{token}": {
       "get": {
         "tags": ["Auth"],
         "summary": "Vérification email via token",
@@ -148,7 +148,7 @@
         }
       }
     },
-    "/auth/request-reset-password": {
+    "api/auth/request-reset-password": {
       "post": {
         "tags": ["Auth"],
         "summary": "Demande de réinitialisation du mot de passe",
@@ -167,7 +167,7 @@
         }
       }
     },
-    "/auth/reset-password/{token}": {
+    "api/auth/reset-password/{token}": {
       "post": {
         "tags": ["Auth"],
         "summary": "Réinitialisation du mot de passe",
@@ -194,7 +194,7 @@
         }
       }
     },
-"/auth/reset-code-patient": {
+"api/auth/reset-code-patient": {
   "post": {
     "tags": ["Auth"],
     "summary": "Générer un nouveau code patient",
@@ -206,7 +206,7 @@
     }
   }
 },
-"/dossiers": {
+"api/dossiers": {
   "post": {
     "tags": ["Dossiers"],
     "summary": "Créer un dossier médical pour un patient",
@@ -236,7 +236,7 @@
       }
     }
   },
-  "/dossiers/{numeroDossier}": {
+  "api/dossiers/{numeroDossier}": {
     "get": {
       "tags": ["Dossiers"],
       "summary": "Lire un dossier et enregistrer l’accès",
@@ -280,7 +280,7 @@
       }
     }
   },
-  "/dossiers/{numeroDossier}/historique": {
+  "api/dossiers/{numeroDossier}/historique": {
     "get": {
       "tags": ["Dossiers"],
       "summary": "Historique des accès du dossier",
@@ -295,7 +295,7 @@
       }
     }
   },
-  "/dossiers/{numeroDossier}/autoriser": {
+  "api/dossiers/{numeroDossier}/autoriser": {
     "post": {
       "tags": ["Dossiers"],
       "summary": "Autoriser un médecin à accéder au dossier",
@@ -323,7 +323,7 @@
       }
     }
   },
-  "/dossiers/{numeroDossier}/upload": {
+  "api/dossiers/{numeroDossier}/upload": {
     "post": {
       "tags": ["Dossiers"],
       "summary": "Upload de fichier dans le dossier",
@@ -343,7 +343,7 @@
       }
     }
   },
-  "/dossiers/{numeroDossier}/autorisations": {
+  "api/dossiers/{numeroDossier}/autorisations": {
     "get": {
       "tags": ["Dossiers"],
       "summary": "Lister les autorisations pour le dossier",
@@ -358,7 +358,7 @@
       }
     }
   },
-  "/dossiers/patient": {
+  "api/dossiers/patient": {
     "post": {
       "tags": ["Dossiers"],
       "summary": "Lister tous les dossiers d’un patient",
@@ -378,7 +378,7 @@
       }
     }
   },
-  "/acces/demander": {
+  "api/acces/demander": {
     "post": {
       "tags": ["Accès"],
       "summary": "Demande d’accès à un patient",
@@ -405,7 +405,7 @@
       }
     }
   },
-  "/acces/repondre/{demandeId}": {
+  "api/acces/repondre/{demandeId}": {
     "post": {
       "tags": ["Accès"],
       "summary": "Réponse à une demande d’accès",
@@ -435,7 +435,7 @@
       }
     }
   },
-  "/acces/revoquer": {
+  "api/acces/revoquer": {
     "post": {
       "tags": ["Accès"],
       "summary": "Révoquer un accès existant",
@@ -463,7 +463,7 @@
       }
     }
   },
-"/acces/liste": {
+"api/acces/liste": {
   "get": {
     "tags": ["Accès"],
     "summary": "Lister toutes les autorisations d’accès d’un patient",
@@ -474,7 +474,7 @@
     }
   }
 },
-"/admin/promouvoir": {
+"api/admin/promouvoir": {
     "post": {
       "tags": ["Admin"],
       "summary": "SUPER_ADMIN : Promouvoir un médecin en Admin d’hôpital",
@@ -505,7 +505,7 @@
       }
     }
   },
-  "/admin/valider-admin": {
+  "api/admin/valider-admin": {
     "post": {
       "tags": ["Admin"],
       "summary": "SUPER_ADMIN : Valider un Admin d’hôpital",
@@ -536,7 +536,7 @@
       }
     }
   },
-  "/admin/valider-medecin": {
+  "api/admin/valider-medecin": {
     "post": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Valider un médecin",
@@ -565,7 +565,7 @@
       }
     }
   },
-  "/admin/medecins": {
+  "api/admin/medecins": {
     "get": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Lister tous les médecins de l’hôpital",
@@ -576,7 +576,7 @@
       }
     }
   },
-  "/admin/medecins/search": {
+  "api/admin/medecins/search": {
     "get": {
       "tags": ["Admin"],
       "summary": "Rechercher des médecins (filtrage)",
@@ -593,7 +593,7 @@
       }
     }
   },
-  "/admin/revoquer-admin": {
+  "api/admin/revoquer-admin": {
     "post": {
       "tags": ["Admin"],
       "summary": "SUPER_ADMIN : Révoquer un admin d’hôpital",
@@ -618,7 +618,7 @@
       }
     }
   },
-  "/admin/supprimer-medecin": {
+  "api/admin/supprimer-medecin": {
     "post": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Supprimer/révoquer un médecin",
@@ -643,7 +643,7 @@
       }
     }
   },
-  "/admin/utilisateurs": {
+  "api/admin/utilisateurs": {
     "get": {
       "tags": ["Admin"],
       "summary": "Lister tous les utilisateurs avec filtre rôle / actif",
@@ -658,7 +658,7 @@
       }
     }
   },
-  "/admin/reactiver/{id}": {
+  "api/admin/reactiver/{id}": {
     "post": {
       "tags": ["Admin"],
       "summary": "Réactiver un utilisateur désactivé",
@@ -672,7 +672,7 @@
       }
     }
   },
-  "/admin/logs": {
+  "api/admin/logs": {
     "get": {
       "tags": ["Admin"],
       "summary": "Lister tous les logs d’audit",
