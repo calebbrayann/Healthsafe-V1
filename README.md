@@ -41,3 +41,50 @@ EMAIL_PASS=...
 
 pnpm start
 
+
+5. Documentation Swagger
+
+La documentation complète de l’API est disponible dans docs/swagger.json.
+Pour visualiser Swagger UI :
+
+Installer Swagger UI Express (si nécessaire) :
+
+pnpm add swagger-ui-express
+
+
+Modifier index.js :
+
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './docs/swagger.json' assert { type: 'json' };
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+Accéder à la documentation :
+
+https://healthsafe-v1-production.up.railway.app/api-docs
+
+
+6. Sécurité
+
+JWT pour l’authentification
+
+Rate limiting pour limiter les tentatives de connexion
+
+Helmet et HPP pour protéger les headers et les requêtes
+
+CORS configuré selon FRONTEND_URL
+
+ 7. Structure du projet
+   HealthSafe/
+
+ controllers/      # Logique des routes
+ middlewares/      # Middleware auth et sécurité
+ routes/           # Définition des routes
+ docs/             # Documentation Swagger
+ config/           # Prisma, nodemailer, etc.
+ index.js          # Point d’entrée de l’API
+
+ 8.Contact
+
+Pour toute question : healthsafes107@gmail.com
