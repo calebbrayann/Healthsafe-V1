@@ -25,6 +25,7 @@ const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const swaggerPath = path.join(__dirname, "docs", "swagger.json");
 const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, "utf-8"));
+console.log(" Routes Swagger chargées :", Object.keys(swaggerDocument.paths));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Sécurité globale

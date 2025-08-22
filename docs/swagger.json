@@ -5,7 +5,6 @@
     "version": "1.0.0",
     "description": "Documentation complète des endpoints HealthSafe"
   },
-
   "servers": [
     {
       "url": "https://healthsafe-v1-production.up.railway.app/api",
@@ -18,18 +17,21 @@
   ],
   "components": {
     "securitySchemes": {
-      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
   },
-
-"tags": [
+  "tags": [
     { "name": "Auth", "description": "Gestion utilisateurs et authentification" },
     { "name": "Dossiers", "description": "Gestion des dossiers médicaux" },
-    { "name": "Acces", "description": "Demandes et autorisations d'accès" },
-    { "name": "Admin", "description": "Fonctions administratives et gestion utilisateurs" }
-  ], 
+    { "name": "Accès", "description": "Gestion des demandes d’accès aux dossiers" },
+    { "name": "Admin", "description": "Fonctionnalités administratives" }
+  ],
   "paths": {
-    "api/auth/register-patient": {
+    "/auth/register-patient": {
       "post": {
         "tags": ["Auth"],
         "summary": "Inscription d’un patient",
@@ -41,13 +43,12 @@
                 "type": "object",
                 "required": ["nom", "prenom", "email", "password", "codePatient"],
                 "properties": {
-                  "nom": { "type": "string" },
-                  "prenom": { "type": "string" },
-                  "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string" },
-                  "codePatient": { "type": "string" }
+                  "nom": { "type": "string", "example": "Mboumba" },
+                  "prenom": { "type": "string", "example": "Caleb" },
+                  "email": { "type": "string", "format": "email", "example": "patient@healthsafe.com" },
+                  "password": { "type": "string", "example": "MotDePasse123!" },
+                  "codePatient": { "type": "string", "example": "PAT-001" }
                 }
-              }
               }
             }
           }
@@ -59,7 +60,7 @@
         }
       }
     },
-    "api/auth/register-medecin": {
+    "/auth/register-medecin": {
       "post": {
         "tags": ["Auth"],
         "summary": "Inscription d’un médecin",
@@ -71,13 +72,13 @@
                 "type": "object",
                 "required": ["nom", "prenom", "email", "password", "numeroLicence", "specialite", "hopital"],
                 "properties": {
-                  "nom": { "type": "string" },
-                  "prenom": { "type": "string" },
-                  "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string" },
-                  "numeroLicence": { "type": "string" },
-                  "specialite": { "type": "string" },
-                  "hopital": { "type": "string" }
+                  "nom": { "type": "string", "example": "Ngoma" },
+                  "prenom": { "type": "string", "example": "Brayann" },
+                  "email": { "type": "string", "format": "email", "example": "medecin@hopital.com" },
+                  "password": { "type": "string", "example": "MotDePasse456!" },
+                  "numeroLicence": { "type": "string", "example": "LIC-2025-001" },
+                  "specialite": { "type": "string", "example": "Cardiologie" },
+                  "hopital": { "type": "string", "example": "CHU Libreville" }
                 }
               }
             }
@@ -90,7 +91,7 @@
         }
       }
     },
-    "api/auth/login": {
+    "/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Connexion",
@@ -102,8 +103,8 @@
                 "type": "object",
                 "required": ["email", "password"],
                 "properties": {
-                  "email": { "type": "string", "format": "email" },
-                  "password": { "type": "string" }
+                  "email": { "type": "string", "format": "email", "example": "admin@hopital.com" },
+                  "password": { "type": "string", "example": "MotDePasse789!" }
                 }
               }
             }
@@ -117,7 +118,7 @@
         }
       }
     },
-    "api/auth/logout": {
+    "/auth/logout": {
       "post": {
         "tags": ["Auth"],
         "summary": "Déconnexion",
@@ -129,7 +130,7 @@
         }
       }
     },
-    "api/auth/verify/{token}": {
+    "/auth/verify/{token}": {
       "get": {
         "tags": ["Auth"],
         "summary": "Vérification email via token",
@@ -148,7 +149,7 @@
         }
       }
     },
-    "api/auth/request-reset-password": {
+    "/auth/request-reset-password": {
       "post": {
         "tags": ["Auth"],
         "summary": "Demande de réinitialisation du mot de passe",
@@ -156,7 +157,13 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object", "required": ["email"], "properties": { "email": { "type": "string", "format": "email" } } }
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": { "type": "string", "format": "email", "example": "patient@healthsafe.com" }
+                }
+              }
             }
           }
         },
@@ -167,7 +174,7 @@
         }
       }
     },
-    "api/auth/reset-password/{token}": {
+    "/auth/reset-password/{token}": {
       "post": {
         "tags": ["Auth"],
         "summary": "Réinitialisation du mot de passe",
@@ -183,7 +190,13 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object", "required": ["password"], "properties": { "password": { "type": "string" } } }
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "password": { "type": "string", "example": "NouveauMotDePasse!" }
+                }
+              }
             }
           }
         },
@@ -194,349 +207,382 @@
         }
       }
     },
-"api/auth/reset-code-patient": {
+    "/auth/reset-code-patient": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Générer un nouveau code patient",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Nouveau code patient généré" },
+          "401": { "description": "Non authentifié" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers": {
+      "post": {
+        "tags": ["Dossiers"],
+        "summary": "Créer un dossier médical pour un patient",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["numeroDossier", "patientId", "diagnostic"],
+                "properties": {
+                  "numeroDossier": { "type": "string", "example": "DOS-001" },
+                  "patientId": { "type": "integer", "example": 12 },
+                  "diagnostic": { "type": "string", "example": "Hypertension" },
+                  "traitement": { "type": "string", "example": "Bêta-bloquants" },
+                  "notes": { "type": "string", "example": "Suivi mensuel recommandé" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dossier créé avec succès" },
+          "400": { "description": "Données invalides" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/{numeroDossier}": {
+      "get": {
+        "tags": ["Dossiers"],
+        "summary": "Lire un dossier et enregistrer l’accès",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Dossier récupéré avec succès" },
+          "404": { "description": "Dossier introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "put": {
+        "tags": ["Dossiers"],
+        "summary": "Mettre à jour un dossier",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diagnostic": { "type": "string" },
+                  "traitement": { "type": "string" },
+                  "notes": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Dossier mis à jour" },
+          "400": { "description": "Données invalides" },
+          "404": { "description": "Dossier introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/{numeroDossier}/historique": {
+      "get": {
+        "tags": ["Dossiers"],
+        "summary": "Historique des accès du dossier",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Historique récupéré avec succès" },
+          "404": { "description": "Dossier introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/{numeroDossier}/autoriser": {
+      "post": {
+        "tags": ["Dossiers"],
+        "summary": "Autoriser un médecin à accéder au dossier",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["medecinId"],
+                "properties": {
+                  "medecinId": { "type": "integer", "example": 7 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Médecin autorisé" },
+          "400": { "description": "Données invalides" },
+          "404": { "description": "Dossier ou médecin introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/{numeroDossier}/upload": {
+      "post": {
+        "tags": ["Dossiers"],
+        "summary": "Upload de fichier dans le dossier",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Fichier uploadé avec succès" },
+          "400": { "description": "Fichier invalide" },
+          "404": { "description": "Dossier introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/{numeroDossier}/autorisations": {
+      "get": {
+        "tags": ["Dossiers"],
+        "summary": "Lister les autorisations pour le dossier",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "numeroDossier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Autorisations récupérées" },
+          "404": { "description": "Dossier introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/dossiers/patient": {
+      "post": {
+        "tags": ["Dossiers"],
+        "summary": "Lister tous les dossiers d’un patient",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["patientId"],
+                "properties": {
+                  "patientId": { "type": "integer", "example": 12 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Dossiers récupérés" },
+          "404": { "description": "Patient introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+
+    "/api/acces/demander": {
   "post": {
-    "tags": ["Auth"],
-    "summary": "Générer un nouveau code patient",
+    "tags": ["Acces"],
+    "summary": "MEDECIN : Faire une demande d'accès à un patient",
     "security": [{ "bearerAuth": [] }],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["codePatient"],
+            "properties": {
+              "codePatient": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
     "responses": {
-      "200": { "description": "Nouveau code patient généré" },
-      "401": { "description": "Non authentifié" },
+      "201": { "description": "Demande d'accès créée avec succès" },
+      "400": { "description": "Une demande est déjà en attente" },
+      "403": { "description": "Seul un médecin peut demander un accès" },
+      "404": { "description": "Patient introuvable" },
       "500": { "description": "Erreur serveur" }
     }
   }
 },
-"api/dossiers": {
+  "/api/acces/repondre/{demandeId}": {
   "post": {
-    "tags": ["Dossiers"],
-    "summary": "Créer un dossier médical pour un patient",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
+    "tags": ["Acces"],
+    "summary": "PATIENT : Accepter ou refuser une demande d'accès",
+    "security": [{ "bearerAuth": [] }],
+    "parameters": [
+      {
+        "name": "demandeId",
+        "in": "path",
         "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["numeroDossier", "patientId", "diagnostic"],
-              "properties": {
-                "numeroDossier": { "type": "string" },
-                "patientId": { "type": "integer" },
-                "diagnostic": { "type": "string" },
-                "traitement": { "type": "string" },
-                "notes": { "type": "string" }
-              }
+        "schema": { "type": "integer" },
+        "description": "ID de la demande"
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["decision"],
+            "properties": {
+              "decision": { "type": "string", "enum": ["ACCEPTEE", "REFUSEE"] }
             }
           }
         }
-      },
-      "responses": {
-        "201": { "description": "Dossier créé avec succès" },
-        "400": { "description": "Données invalides" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/dossiers/{numeroDossier}": {
-    "get": {
-      "tags": ["Dossiers"],
-      "summary": "Lire un dossier et enregistrer l’accès",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "responses": {
-        "200": { "description": "Dossier récupéré avec succès" },
-        "404": { "description": "Dossier introuvable" },
-        "500": { "description": "Erreur serveur" }
       }
     },
-    "put": {
-      "tags": ["Dossiers"],
-      "summary": "Mettre à jour un dossier",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "diagnostic": { "type": "string" },
-                "traitement": { "type": "string" },
-                "notes": { "type": "string" }
-              }
+    "responses": {
+      "200": { "description": "Demande traitée avec succès" },
+      "400": { "description": "Décision invalide" },
+      "403": { "description": "Seul un patient peut répondre" },
+      "404": { "description": "Demande introuvable" },
+      "500": { "description": "Erreur serveur" }
+    }
+  }
+},
+  "/api/acces/revoquer": {
+  "post": {
+    "tags": ["Acces"],
+    "summary": "PATIENT : Révoquer l'accès d'un médecin",
+    "security": [{ "bearerAuth": [] }],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["nom", "prenom", "numeroLicence"],
+            "properties": {
+              "nom": { "type": "string" },
+              "prenom": { "type": "string" },
+              "numeroLicence": { "type": "string" }
             }
           }
         }
-      },
-      "responses": {
-        "200": { "description": "Dossier mis à jour" },
-        "400": { "description": "Données invalides" },
-        "404": { "description": "Dossier introuvable" },
-        "500": { "description": "Erreur serveur" }
       }
+    },
+    "responses": {
+      "200": { "description": "Accès révoqué avec succès" },
+      "403": { "description": "Seul un patient peut révoquer" },
+      "404": { "description": "Médecin introuvable" },
+      "500": { "description": "Erreur serveur" }
     }
-  },
-  "api/dossiers/{numeroDossier}/historique": {
-    "get": {
-      "tags": ["Dossiers"],
-      "summary": "Historique des accès du dossier",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "responses": {
-        "200": { "description": "Historique récupéré avec succès" },
-        "404": { "description": "Dossier introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/dossiers/{numeroDossier}/autoriser": {
-    "post": {
-      "tags": ["Dossiers"],
-      "summary": "Autoriser un médecin à accéder au dossier",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["medecinId"],
-              "properties": { "medecinId": { "type": "integer" } }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Médecin autorisé" },
-        "400": { "description": "Données invalides" },
-        "404": { "description": "Dossier ou médecin introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/dossiers/{numeroDossier}/upload": {
-    "post": {
-      "tags": ["Dossiers"],
-      "summary": "Upload de fichier dans le dossier",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": { "multipart/form-data": { "schema": { "type": "object", "properties": { "file": { "type": "string", "format": "binary" } } } } }
-      },
-      "responses": {
-        "200": { "description": "Fichier uploadé avec succès" },
-        "400": { "description": "Fichier invalide" },
-        "404": { "description": "Dossier introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/dossiers/{numeroDossier}/autorisations": {
-    "get": {
-      "tags": ["Dossiers"],
-      "summary": "Lister les autorisations pour le dossier",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "numeroDossier", "in": "path", "required": true, "schema": { "type": "string" } }
-      ],
-      "responses": {
-        "200": { "description": "Autorisations récupérées" },
-        "404": { "description": "Dossier introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/dossiers/patient": {
-    "post": {
-      "tags": ["Dossiers"],
-      "summary": "Lister tous les dossiers d’un patient",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": { "type": "object", "required": ["patientId"], "properties": { "patientId": { "type": "integer" } } }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Dossiers récupérés" },
-        "404": { "description": "Patient introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/acces/demander": {
-    "post": {
-      "tags": ["Accès"],
-      "summary": "Demande d’accès à un patient",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["patientId"],
-              "properties": {
-                "patientId": { "type": "integer" },
-                "raison": { "type": "string" }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Demande envoyée avec succès" },
-        "400": { "description": "Données invalides" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/acces/repondre/{demandeId}": {
-    "post": {
-      "tags": ["Accès"],
-      "summary": "Réponse à une demande d’accès",
-      "security": [{ "bearerAuth": [] }],
-      "parameters": [
-        { "name": "demandeId", "in": "path", "required": true, "schema": { "type": "integer" } }
-      ],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["reponse"],
-              "properties": {
-                "reponse": { "type": "string", "enum": ["accepter", "refuser"] }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Réponse enregistrée" },
-        "400": { "description": "Réponse invalide" },
-        "404": { "description": "Demande introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/acces/revoquer": {
-    "post": {
-      "tags": ["Accès"],
-      "summary": "Révoquer un accès existant",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["medecinId"],
-              "properties": {
-                "medecinId": { "type": "integer" },
-                "patientId": { "type": "integer" }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Accès révoqué avec succès" },
-        "400": { "description": "Données invalides" },
-        "404": { "description": "Accès introuvable" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-"api/acces/liste": {
+  }
+},
+"/api/acces/liste": {
   "get": {
-    "tags": ["Accès"],
-    "summary": "Lister toutes les autorisations d’accès d’un patient",
+    "tags": ["Acces"],
+    "summary": "PATIENT : Lister tous les médecins autorisés",
     "security": [{ "bearerAuth": [] }],
     "responses": {
       "200": { "description": "Liste des accès récupérée" },
+      "403": { "description": "Seul un patient peut consulter" },
       "500": { "description": "Erreur serveur" }
     }
   }
 },
-"api/admin/promouvoir": {
-    "post": {
-      "tags": ["Admin"],
-      "summary": "SUPER_ADMIN : Promouvoir un médecin en Admin d’hôpital",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["nom", "prenom", "numeroLicence", "hopital"],
-              "properties": {
-                "nom": { "type": "string" },
-                "prenom": { "type": "string" },
-                "numeroLicence": { "type": "string" },
-                "hopital": { "type": "string" }
+    "/admin/promouvoir": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "SUPER_ADMIN : Promouvoir un médecin en Admin d’hôpital",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nom", "prenom", "numeroLicence", "hopital"],
+                "properties": {
+                  "nom": { "type": "string" },
+                  "prenom": { "type": "string" },
+                  "numeroLicence": { "type": "string" },
+                  "hopital": { "type": "string" }
+                }
               }
             }
           }
+        },
+        "responses": {
+          "200": { "description": "Médecin promu avec succès" },
+          "400": { "description": "Données manquantes ou invalides" },
+          "404": { "description": "Médecin introuvable" },
+          "403": { "description": "Accès interdit" },
+          "500": { "description": "Erreur serveur" }
         }
-      },
-      "responses": {
-        "200": { "description": "Médecin promu avec succès" },
-        "400": { "description": "Données manquantes ou invalides" },
-        "404": { "description": "Médecin introuvable" },
-        "403": { "description": "Accès interdit" },
-        "500": { "description": "Erreur serveur" }
       }
-    }
-  },
-  "api/admin/valider-admin": {
-    "post": {
-      "tags": ["Admin"],
-      "summary": "SUPER_ADMIN : Valider un Admin d’hôpital",
-      "security": [{ "bearerAuth": [] }],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["nom", "prenom", "numeroLicence", "hopital"],
-              "properties": {
-                "nom": { "type": "string" },
-                "prenom": { "type": "string" },
-                "numeroLicence": { "type": "string" },
-                "hopital": { "type": "string" }
-              }
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": { "description": "Admin validé avec succès" },
-        "400": { "description": "Données manquantes" },
-        "404": { "description": "Admin introuvable" },
-        "403": { "description": "Accès interdit" },
-        "500": { "description": "Erreur serveur" }
-      }
-    }
-  },
-  "api/admin/valider-medecin": {
+    },  "/api/admin/valider-medecin": {
     "post": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Valider un médecin",
@@ -565,7 +611,7 @@
       }
     }
   },
-  "api/admin/medecins": {
+  "/api/admin/medecins": {
     "get": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Lister tous les médecins de l’hôpital",
@@ -576,7 +622,7 @@
       }
     }
   },
-  "api/admin/medecins/search": {
+  "/api/admin/medecins/search": {
     "get": {
       "tags": ["Admin"],
       "summary": "Rechercher des médecins (filtrage)",
@@ -593,7 +639,7 @@
       }
     }
   },
-  "api/admin/revoquer-admin": {
+  "/api/admin/revoquer-admin": {
     "post": {
       "tags": ["Admin"],
       "summary": "SUPER_ADMIN : Révoquer un admin d’hôpital",
@@ -605,7 +651,9 @@
             "schema": {
               "type": "object",
               "required": ["email"],
-              "properties": { "email": { "type": "string" } }
+              "properties": {
+                "email": { "type": "string" }
+              }
             }
           }
         }
@@ -618,7 +666,7 @@
       }
     }
   },
-  "api/admin/supprimer-medecin": {
+  "/api/admin/supprimer-medecin": {
     "post": {
       "tags": ["Admin"],
       "summary": "ADMIN_HOPITAL : Supprimer/révoquer un médecin",
@@ -630,7 +678,9 @@
             "schema": {
               "type": "object",
               "required": ["email"],
-              "properties": { "email": { "type": "string" } }
+              "properties": {
+                "email": { "type": "string" }
+              }
             }
           }
         }
@@ -643,7 +693,7 @@
       }
     }
   },
-  "api/admin/utilisateurs": {
+  "/api/admin/utilisateurs": {
     "get": {
       "tags": ["Admin"],
       "summary": "Lister tous les utilisateurs avec filtre rôle / actif",
@@ -658,21 +708,28 @@
       }
     }
   },
-  "api/admin/reactiver/{id}": {
+  "/api/admin/reactiver/{id}": {
     "post": {
       "tags": ["Admin"],
       "summary": "Réactiver un utilisateur désactivé",
       "security": [{ "bearerAuth": [] }],
       "parameters": [
-        { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "integer" },
+          "description": "ID de l'utilisateur à réactiver"
+        }
       ],
       "responses": {
         "200": { "description": "Utilisateur réactivé avec succès" },
+        "404": { "description": "Utilisateur introuvable" },
         "500": { "description": "Erreur serveur" }
       }
     }
   },
-  "api/admin/logs": {
+  "/api/admin/logs": {
     "get": {
       "tags": ["Admin"],
       "summary": "Lister tous les logs d’audit",
@@ -683,4 +740,5 @@
       }
     }
   }
+}
 }
