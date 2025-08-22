@@ -46,10 +46,5 @@ router.post('/reset-password/:token', resetPassword);
 // Réinitialisation du code patient
 router.post('/reset-code-patient', authMiddleware, resetCodePatient);
 
-// Route de test interne (à supprimer en prod)
-router.post('/ping', (req, res) => {
-  res.json({ message: 'authRoutes fonctionne' });
-});
-
 
 export default router;
