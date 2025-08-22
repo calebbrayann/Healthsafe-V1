@@ -7,7 +7,8 @@ import {
   requestResetPassword,
   resetPassword,
   logout,
-  resetCodePatient
+  resetCodePatient,
+  me
 } from '../controllers/authController.js';
 
 import { validateAndSanitize } from '../middlewares/validateAndSanitize.js';
@@ -24,6 +25,8 @@ router.post('/login', validateLogin, login);
 
 // Déconnexion
 router.post('/logout', authMiddleware, logout);
+
+router.get("/me", me);
 
 // Inscription patient
 router.post('/register-patient', validateAndSanitize, registerPatient);
@@ -47,5 +50,6 @@ router.post('/reset-code-patient', authMiddleware, resetCodePatient);
 router.post('/ping', (req, res) => {
   res.json({ message: 'authRoutes fonctionne' });
 });
+
 
 export default router;

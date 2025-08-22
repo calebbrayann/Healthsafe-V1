@@ -259,3 +259,14 @@ export async function resetCodePatient(req, res) {
   }
 }
 
+export function me(req, res) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: "Non authentifié." });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.json({ userId: decoded.userId, role: decoded.role });
+  } catch {
+    return res.status(401).json({ message: "Token invalide." });
+  }
+}
