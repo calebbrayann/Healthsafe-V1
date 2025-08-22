@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = "postgresql://postgres:oGxZPPvWDKrZLFvaOIboqGkaoswRBkSm@crossover.proxy.rlwy.net:41189/railway"
 }
 
 enum Role {
