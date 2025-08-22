@@ -30,7 +30,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Sécurité globale
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONT_URL, credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
