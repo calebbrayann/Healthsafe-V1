@@ -65,14 +65,11 @@ const loginLimiter = rateLimit({
 });
 
 // Routes
-app.use("/api/auth", loginLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/dossiers", dossierRoutes);
 app.use("/api/acces", accesRoutes);
 
-app.post("/api/test-login", (req, res) => {
-  res.json({ message: "Route test OK" });
-});
 
 // Health check
 app.get("/", (req, res) => res.send("API HealthSafe welcome OK"));
