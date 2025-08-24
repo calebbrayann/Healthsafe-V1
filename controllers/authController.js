@@ -181,7 +181,6 @@ export async function login(req, res) {
       { expiresIn: "1d" }
     );
 
- brayann
     res.cookie('token', token, {
       httpOnly: true,      // le front ne peut pas lire le cookie, sécurisé
       secure: true,        // envoyé seulement en HTTPS
@@ -189,8 +188,7 @@ export async function login(req, res) {
       maxAge: 24 * 60 * 60 * 1000
     });
 
-    return res.json({ message: 'Connexion réussie.' }); // pas besoin de renvoyer le tok
-
+    return res.json({ message: 'Connexion réussie.' }); // pas besoin de renvoyer le token
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur." });
@@ -310,16 +308,15 @@ export async function resetCodePatient(req, res) {
   }
 }
 
+
+
 export async function me(req, res) {
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: "Non authentifié." });
 
-
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
- brayann
     const utilisateur = await prisma.utilisateur.findUnique({
       where: { id: decoded.userId },
       select: { id: true, nom: true, prenom: true, email: true, role: true },
@@ -334,19 +331,9 @@ export async function me(req, res) {
         email: utilisateur.email,
         firstName: utilisateur.prenom,
         lastName: utilisateur.nom,
-
       },
     });
   } catch (err) {
     return res.status(401).json({ message: "Token invalide ou expiré." });
   }
-}
-
-
-
-// ========================================
-// TEST FUNCTION POUR VERIFIER LES COMMITS
-// ========================================
-export function pingTest(req, res) {
-  return res.json({ message: "pong depuis la branche brayann 🎉" });
 }
