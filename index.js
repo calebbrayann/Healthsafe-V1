@@ -25,13 +25,13 @@ const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const swaggerPath = path.join(__dirname, "docs", "swagger.json");
 const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, "utf-8"));
-console.log(" Routes Swagger chargées :", Object.keys(swaggerDocument.paths));
+console.log("Routes Swagger chargées :", Object.keys(swaggerDocument.paths));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Sécurité globale
 app.use(helmet());
 
-// CORS corrigé
+// CORS
 const allowedOrigins = [
   "https://health-safe-front.vercel.app",
   "http://localhost:3000",
@@ -39,26 +39,25 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS non autorisé"));
-    }
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error("CORS non autorisé"));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// Middleware généraux
 app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Limitation globale
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 
-// Limitation spécifique pour login/reset
+// Limitation spécifique login/reset
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
@@ -71,9 +70,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/dossiers", dossierRoutes);
 app.use("/api/acces", accesRoutes);
 
-
 // Health check
-app.get("/", (req, res) => res.send("API HealthSafe welcome OK"));
+app.get("/", (req, res) => res.send("API HealthSafe OK"));
 
 // 404
 app.use((req, res) => res.status(404).json({ message: "Route introuvable." }));

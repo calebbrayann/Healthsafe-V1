@@ -175,25 +175,28 @@ export async function login(req, res) {
     if (!utilisateur.verifie)
       return res.status(401).json({ message: "Compte non vérifié." });
 
+    // Génération du token
     const token = jwt.sign(
       { userId: utilisateur.id, role: utilisateur.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,      // le front ne peut pas lire le cookie, sécurisé
-      secure: true,        // envoyé seulement en HTTPS
-      sameSite: 'None',    // pour cross-site requests si front et back différents
+    // Cookie sécurisé prêt pour prod
+    res.cookie("token", token, {
+      httpOnly: true,         // Front ne peut pas lire
+      secure: process.env.NODE_ENV === "production", // HTTPS seulement en prod
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Cross-site en prod
       maxAge: 24 * 60 * 60 * 1000
     });
 
-    return res.json({ message: 'Connexion réussie.' }); // pas besoin de renvoyer le token
+    return res.json({ message: "Connexion réussie." });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur." });
   }
 }
+
 
 //  VERIFICATION EMAIL
 export async function verifyEmail(req, res) {
