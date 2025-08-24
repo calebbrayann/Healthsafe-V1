@@ -310,30 +310,3 @@ export async function resetCodePatient(req, res) {
 
 
 
-export async function me(req, res) {
-  const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ message: "Non authentifié." });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const utilisateur = await prisma.utilisateur.findUnique({
-      where: { id: decoded.userId },
-      select: { id: true, nom: true, prenom: true, email: true, role: true },
-    });
-
-    if (!utilisateur) return res.status(404).json({ message: "Utilisateur introuvable." });
-
-    return res.status(200).json({
-      user: {
-        id: utilisateur.id,
-        role: utilisateur.role,
-        email: utilisateur.email,
-        firstName: utilisateur.prenom,
-        lastName: utilisateur.nom,
-      },
-    });
-  } catch (err) {
-    return res.status(401).json({ message: "Token invalide ou expiré." });
-  }
-}
