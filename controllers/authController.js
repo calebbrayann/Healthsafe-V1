@@ -156,11 +156,10 @@ export async function registerMedecin(req, res) {
   }
 }
 
-//  LOGIN
+// LOGIN
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
-
     if (!email || !password)
       return res.status(400).json({ message: "Tous les champs sont requis." });
 
@@ -182,14 +181,16 @@ export async function login(req, res) {
       { expiresIn: "1d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
+ brayann
+    res.cookie('token', token, {
+      httpOnly: true,      // le front ne peut pas lire le cookie, sécurisé
+      secure: true,        // envoyé seulement en HTTPS
+      sameSite: 'None',    // pour cross-site requests si front et back différents
+      maxAge: 24 * 60 * 60 * 1000
     });
 
-    return res.json({ message: "Connexion réussie.", token });
+    return res.json({ message: 'Connexion réussie.' }); // pas besoin de renvoyer le tok
+
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur." });
@@ -309,21 +310,34 @@ export async function resetCodePatient(req, res) {
   }
 }
 
-export function me(req, res) {
+ brayann
+
+
+export async function me(req, res) {
   const token = req.cookies?.token;
-  if (!token) {
-    return res.status(401).json({ message: "Non authentifié." });
-  }
+  if (!token) return res.status(401).json({ message: "Non authentifié." });
+
+
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // renvoyer les infos utiles (et pas tout le payload brut)
+ brayann
+    const utilisateur = await prisma.utilisateur.findUnique({
+      where: { id: decoded.userId },
+      select: { id: true, nom: true, prenom: true, email: true, role: true },
+    });
+
+    if (!utilisateur) return res.status(404).json({ message: "Utilisateur introuvable." });
+
     return res.status(200).json({
       user: {
-        id: decoded.userId,
-        role: decoded.role,
-        email: decoded.email, // si tu l'as mis dans le JWT
+        id: utilisateur.id,
+        role: utilisateur.role,
+        email: utilisateur.email,
+        firstName: utilisateur.prenom,
+        lastName: utilisateur.nom,
+
       },
     });
   } catch (err) {

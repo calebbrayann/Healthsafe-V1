@@ -34,7 +34,8 @@ app.use(helmet());
 // CORS corrigé
 const allowedOrigins = [
   "https://health-safe-front.vercel.app",
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "https://healthsafe-v1-production.up.railway.app"
 ];
 
 app.use(cors({
