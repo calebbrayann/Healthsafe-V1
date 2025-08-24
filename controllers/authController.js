@@ -336,3 +336,11 @@ export async function me(req, res) {
   }
 }
 
+
+
+// ========================================
+// TEST FUNCTION POUR VERIFIER LES COMMITS
+// ========================================
+export function pingTest(req, res) {
+  return res.json({ message: "pong depuis la branche brayann 🎉" });
+}
