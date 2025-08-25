@@ -8,7 +8,8 @@ import {
   resetPassword,
   logout,
   resetCodePatient,
-  me
+  me,
+  refresh
 } from '../controllers/authController.js';
 
 import { validateAndSanitize } from '../middlewares/validateAndSanitize.js';
