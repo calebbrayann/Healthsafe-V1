@@ -9,7 +9,8 @@ import {
   supprimerMedecin ,
   getUtilisateurs,
   getLogs,
-  reactiverUtilisateur
+  reactiverUtilisateur,
+  refresh
 } from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { superAdminMiddleware } from '../middlewares/superAdminOnly.js';
@@ -48,6 +49,5 @@ router.put("/utilisateurs/:id/reactiver",authMiddleware, roleMiddleware(["SUPER_
 
 // Récupérer les logs
 router.get("/logs",authMiddleware, roleMiddleware(["SUPER_ADMIN", "ADMIN_HOPITAL"]),getLogs);
-
 
 export default router;
