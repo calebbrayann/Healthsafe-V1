@@ -10,7 +10,6 @@ import {
   getUtilisateurs,
   getLogs,
   reactiverUtilisateur,
-  refresh
 } from '../controllers/adminController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { superAdminMiddleware } from '../middlewares/superAdminOnly.js';
