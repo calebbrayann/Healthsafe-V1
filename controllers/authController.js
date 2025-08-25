@@ -179,7 +179,7 @@ export async function login(req, res) {
     const token = jwt.sign(
       { userId: utilisateur.id, role: utilisateur.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
     // Cookie sécurisé prêt pour prod
@@ -187,7 +187,7 @@ export async function login(req, res) {
       httpOnly: true,         // Front ne peut pas lire
       secure: process.env.NODE_ENV === "production", // HTTPS seulement en prod
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Cross-site en prod
-      maxAge: 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     return res.json({ message: "Connexion réussie." });
