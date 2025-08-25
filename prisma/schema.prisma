@@ -54,6 +54,8 @@ model Utilisateur {
   consultationsAdministrees Consultation[]   @relation("ConsultationsParAdmin")
   auditLogs            AuditLog[]           @relation("LogsParUtilisateur")
 
+  refreshTokens        RefreshToken[]       // ← ajouté pour corriger la relation
+
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
 }
@@ -164,11 +166,11 @@ model AuditLog {
 }
 
 model RefreshToken {
-  id         Int      @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   utilisateurId String
-  token      String   @unique
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  token         String       @unique
+  expiresAt     DateTime
+  createdAt     DateTime     @default(now())
   
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  utilisateur   Utilisateur  @relation(fields: [utilisateurId], references: [id])
 }
