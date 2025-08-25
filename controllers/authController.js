@@ -156,38 +156,56 @@ export async function registerMedecin(req, res) {
   }
 }
 
-// LOGIN
+
+// LOGIN avec refresh token
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
     if (!email || !password)
       return res.status(400).json({ message: "Tous les champs sont requis." });
 
-    const utilisateur = await prisma.utilisateur.findUnique({
-      where: { email },
-    });
-    if (!utilisateur)
-      return res.status(401).json({ message: "Identifiants incorrects." });
+    const utilisateur = await prisma.utilisateur.findUnique({ where: { email } });
+    if (!utilisateur) return res.status(401).json({ message: "Identifiants incorrects." });
 
     const isMatch = await bcrypt.compare(password, utilisateur.motDePasse);
-    if (!isMatch)
-      return res.status(401).json({ message: "Identifiants incorrects." });
-    if (!utilisateur.verifie)
-      return res.status(401).json({ message: "Compte non vérifié." });
+    if (!isMatch) return res.status(401).json({ message: "Identifiants incorrects." });
+    if (!utilisateur.verifie) return res.status(401).json({ message: "Compte non vérifié." });
 
-    // Génération du token
-    const token = jwt.sign(
+    // Génération accessToken (court terme)
+    const accessToken = jwt.sign(
       { userId: utilisateur.id, role: utilisateur.role },
       process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    // Génération refreshToken (long terme)
+    const refreshToken = jwt.sign(
+      { userId: utilisateur.id },
+      process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
 
-    // Cookie sécurisé prêt pour prod
-    res.cookie("token", token, {
-      httpOnly: true,         // Front ne peut pas lire
-      secure: process.env.NODE_ENV === "production", // HTTPS seulement en prod
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Cross-site en prod
-      maxAge: 7 * 24 * 60 * 60 * 1000
+    // Stocker refreshToken dans la DB
+    await prisma.refreshToken.create({
+      data: {
+        utilisateurId: utilisateur.id,
+        token: refreshToken,
+        expiresAt: new Date(Date.now() + 7*24*60*60*1000),
+      }
+    });
+
+    // Envoi cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 15*60*1000
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 7*24*60*60*1000
     });
 
     return res.json({ message: "Connexion réussie." });
@@ -196,7 +214,6 @@ export async function login(req, res) {
     return res.status(500).json({ message: "Erreur serveur." });
   }
 }
-
 
 //  VERIFICATION EMAIL
 export async function verifyEmail(req, res) {
@@ -282,12 +299,27 @@ export async function resetPassword(req, res) {
     return res.status(500).json({ message: "Erreur serveur." });
   }
 }
+// LOGOUT sécurisé
+export async function logout(req, res) {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
 
-//  LOGOUT
-export function logout(req, res) {
-  res.clearCookie("token");
-  return res.json({ message: "Déconnexion réussie." });
+    // Supprimer le refreshToken côté serveur
+    if (refreshToken) {
+      await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
+    }
+
+    // Supprimer les cookies côté client
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
+    return res.json({ message: "Déconnexion réussie." });
+  } catch (err) {
+    console.error("Erreur logout:", err);
+    return res.status(500).json({ message: "Erreur serveur." });
+  }
 }
+
 
 //  RESET CODE PATIENT — corrigé
 export async function resetCodePatient(req, res) {
@@ -314,29 +346,110 @@ export async function resetCodePatient(req, res) {
 
 
 export async function me(req, res) {
-  const token = req.cookies?.token;
+  let token = req.cookies?.accessToken;
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!token && !refreshToken) {
+    return res.status(401).json({ message: "Non authentifié." });
+  }
+
+  try {
+    // 1️⃣ Vérifier accessToken
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return sendUser(decoded.userId, res);
+  } catch (err) {
+    // 2️⃣ accessToken invalide ou expiré, essayer refreshToken
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Token invalide ou expiré." });
+    }
+
+    try {
+      const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+      // Vérifier que refreshToken existe toujours en DB
+      const tokenEntry = await prisma.refreshToken.findUnique({
+        where: { token: refreshToken },
+      });
+      if (!tokenEntry || tokenEntry.expiresAt < new Date()) {
+        return res.status(401).json({ message: "Refresh token invalide ou expiré." });
+      }
+
+      // Générer un nouvel accessToken
+      const newAccessToken = jwt.sign(
+        { userId: decodedRefresh.userId },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      // Envoyer le nouveau cookie
+      res.cookie("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      // Renvoyer l’utilisateur
+      return sendUser(decodedRefresh.userId, res);
+
+    } catch {
+      return res.status(401).json({ message: "Refresh token invalide ou expiré." });
+    }
+  }
+}
+
+// Fonction utilitaire pour renvoyer l’utilisateur
+async function sendUser(userId, res) {
+  const utilisateur = await prisma.utilisateur.findUnique({
+    where: { id: userId },
+    select: { id: true, nom: true, prenom: true, email: true, role: true },
+  });
+
+  if (!utilisateur) return res.status(404).json({ message: "Utilisateur introuvable." });
+
+  return res.status(200).json({
+    user: {
+      id: utilisateur.id,
+      role: utilisateur.role,
+      email: utilisateur.email,
+      firstName: utilisateur.prenom,
+      lastName: utilisateur.nom,
+    },
+  });
+}
+
+
+
+export async function refresh(req, res) {
+  const token = req.cookies.refreshToken;
   if (!token) return res.status(401).json({ message: "Non authentifié." });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Vérifier token et existence dans DB
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
-    const utilisateur = await prisma.utilisateur.findUnique({
-      where: { id: decoded.userId },
-      select: { id: true, nom: true, prenom: true, email: true, role: true },
+    const tokenEntry = await prisma.refreshToken.findUnique({ where: { token } });
+    if (!tokenEntry || tokenEntry.expiresAt < new Date()) {
+      return res.status(401).json({ message: "Refresh token invalide ou expiré." });
+    }
+
+    // Générer nouveau accessToken
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 15*60*1000
     });
 
-    if (!utilisateur) return res.status(404).json({ message: "Utilisateur introuvable." });
-
-    return res.status(200).json({
-      user: {
-        id: utilisateur.id,
-        role: utilisateur.role,
-        email: utilisateur.email,
-        firstName: utilisateur.prenom,
-        lastName: utilisateur.nom,
-      },
-    });
+    return res.json({ message: "Access token régénéré." });
   } catch (err) {
-    return res.status(401).json({ message: "Token invalide ou expiré." });
+    console.error(err);
+    return res.status(401).json({ message: "Refresh token invalide ou expiré." });
   }
 }

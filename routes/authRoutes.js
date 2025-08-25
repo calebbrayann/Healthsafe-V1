@@ -46,5 +46,8 @@ router.post('/reset-password/:token', resetPassword);
 // Réinitialisation du code patient
 router.post('/reset-code-patient', authMiddleware, resetCodePatient);
 
+// Endpoint pour rafraîchir le token
+router.post("/refresh", authMiddleware, refresh);
+
 
 export default router;
