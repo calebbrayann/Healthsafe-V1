@@ -20,6 +20,8 @@ import dossierRoutes from "./routes/dossierRoutes.js";
 
 dotenv.config();
 const app = express();
+app.set("trust proxy", 1);
+
 
 // Swagger setup
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
