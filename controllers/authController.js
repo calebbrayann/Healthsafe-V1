@@ -157,7 +157,6 @@ export async function registerMedecin(req, res) {
 }
 
 
-// LOGIN avec refresh token
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -190,8 +189,8 @@ export async function login(req, res) {
       data: {
         utilisateurId: utilisateur.id,
         token: refreshToken,
-        expiresAt: new Date(Date.now() + 7*24*60*60*1000),
-      }
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
     });
 
     // Envoi cookies
@@ -199,21 +198,32 @@ export async function login(req, res) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      maxAge: 15*60*1000
+      maxAge: 15 * 60 * 1000,
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      maxAge: 7*24*60*60*1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ message: "Connexion réussie." });
+    // Réponse enrichie pour le frontend
+    return res.json({
+      message: "Connexion réussie.",
+      user: {
+        id: utilisateur.id,
+        role: utilisateur.role,
+        email: utilisateur.email,
+        firstName: utilisateur.prenom,
+        lastName: utilisateur.nom,
+      },
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur." });
   }
 }
+
 
 //  VERIFICATION EMAIL
 export async function verifyEmail(req, res) {
