@@ -355,79 +355,29 @@ export async function resetCodePatient(req, res) {
 
 
 
+// Dans authController.js - Version simplifiée de la route /me
 export async function me(req, res) {
-  let token = req.cookies?.accessToken;
-  const refreshToken = req.cookies?.refreshToken;
-
-  if (!token && !refreshToken) {
-    return res.status(401).json({ message: "Non authentifié." });
-  }
-
   try {
-    // 1️⃣ Vérifier accessToken
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return sendUser(decoded.userId, res);
+    // L'utilisateur est déjà récupéré et vérifié par authMiddleware
+    const user = req.user;
+    
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        firstName: user.prenom,
+        lastName: user.nom,
+        codePatient: user.codePatient, // Utile pour les patients
+        specialite: user.specialite,   // Utile pour les médecins
+        hopital: user.hopital          // Utile pour les médecins/admins
+      },
+    });
   } catch (err) {
-    // 2️⃣ accessToken invalide ou expiré, essayer refreshToken
-    if (!refreshToken) {
-      return res.status(401).json({ message: "Token invalide ou expiré." });
-    }
-
-    try {
-      const decodedRefresh = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-      // Vérifier que refreshToken existe toujours en DB
-      const tokenEntry = await prisma.refreshToken.findUnique({
-        where: { token: refreshToken },
-      });
-      if (!tokenEntry || tokenEntry.expiresAt < new Date()) {
-        return res.status(401).json({ message: "Refresh token invalide ou expiré." });
-      }
-
-      // Générer un nouvel accessToken
-      const newAccessToken = jwt.sign(
-        { userId: decodedRefresh.userId },
-        process.env.JWT_SECRET,
-        { expiresIn: "15m" }
-      );
-
-      // Envoyer le nouveau cookie
-      res.cookie("accessToken", newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-        maxAge: 15 * 60 * 1000,
-      });
-
-      // Renvoyer l’utilisateur
-      return sendUser(decodedRefresh.userId, res);
-
-    } catch {
-      return res.status(401).json({ message: "Refresh token invalide ou expiré." });
-    }
+    console.error("Erreur dans /me:", err);
+    return res.status(500).json({ message: "Erreur serveur." });
   }
 }
-
-// Fonction utilitaire pour renvoyer l’utilisateur
-async function sendUser(userId, res) {
-  const utilisateur = await prisma.utilisateur.findUnique({
-    where: { id: userId },
-    select: { id: true, nom: true, prenom: true, email: true, role: true },
-  });
-
-  if (!utilisateur) return res.status(404).json({ message: "Utilisateur introuvable." });
-
-  return res.status(200).json({
-    user: {
-      id: utilisateur.id,
-      role: utilisateur.role,
-      email: utilisateur.email,
-      firstName: utilisateur.prenom,
-      lastName: utilisateur.nom,
-    },
-  });
-}
-
 
 
 export async function refresh(req, res) {

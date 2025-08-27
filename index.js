@@ -22,7 +22,6 @@ dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
 
-
 // Swagger setup
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const swaggerPath = path.join(__dirname, "docs", "swagger.json");
@@ -42,12 +41,24 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
-    else callback(new Error("CORS non autorisé"));
+    // Permettre les requêtes sans origin (Postman, mobile apps)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS bloqué pour:', origin);
+      callback(new Error("CORS non autorisé"));
+    }
   },
-  credentials: true,
+  credentials: true, // ESSENTIEL pour les cookies
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: [
+    "Content-Type", 
+    "Authorization",
+    "Cookie" // Permettre l'envoi de cookies
+  ],
+  exposedHeaders: ["Set-Cookie"] // Permettre de recevoir les cookies
 }));
 
 // Middleware généraux
