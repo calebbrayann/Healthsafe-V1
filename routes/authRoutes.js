@@ -27,7 +27,8 @@ router.post('/login', validateLogin, login);
 // Déconnexion
 router.post('/logout', authMiddleware, logout);
 
-router.get("/me", me);
+// Récupérer les infos de l'utilisateur connecté
+router.get("/me", authMiddleware, me);
 
 // Inscription patient
 router.post('/register-patient', validateAndSanitize, registerPatient);
@@ -35,7 +36,7 @@ router.post('/register-patient', validateAndSanitize, registerPatient);
 // Inscription médecin
 router.post('/register-medecin', registerMedecin);
 
-// Vérification d’email
+// Vérification d'email
 router.get('/verify/:token', verifyEmail);
 
 // Demande de réinitialisation de mot de passe
@@ -48,7 +49,6 @@ router.post('/reset-password/:token', resetPassword);
 router.post('/reset-code-patient', authMiddleware, resetCodePatient);
 
 // Endpoint pour rafraîchir le token
-router.post("/refresh", authMiddleware, refresh);
-
+router.post("/refresh", refresh); 
 
 export default router;
